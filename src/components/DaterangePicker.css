@@ -1,0 +1,90 @@
+.react-daterange-picker {
+  display: inline-flex;
+  position: relative;
+  font-size: 1.3em;
+}
+.react-daterange-picker,
+.react-daterange-picker *,
+.react-daterange-picker *:before,
+.react-daterange-picker *:after {
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
+}
+.react-daterange-picker__wrapper {
+  display: flex;
+  flex-grow: 1;
+  flex-shrink: 0;
+  align-items: center;
+  border: thin solid gray;
+  border-radius: 5px;
+  padding: 6px 10px;
+}
+.react-daterange-picker__inputGroup {
+  min-width: calc(((4px * 3) + (0.54em * 1.5) * 8 + 0.217em));
+  text-align: center;
+  height: 100%;
+  flex-grow: 1;
+  box-sizing: content-box;
+}
+.react-daterange-picker__range-divider {
+  margin-left: 4px;
+  margin-right: 4px;
+}
+.react-daterange-picker__inputGroup__input {
+  min-width: calc(0.54em * 1.8);
+  text-align: center;
+  height: 100%;
+  position: relative;
+  padding: 0 1px;
+  border: 0;
+  background: none;
+  font: inherit;
+  box-sizing: content-box;
+  -moz-appearance: textfield;
+}
+.react-daterange-picker__inputGroup__input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+.react-daterange-picker__inputGroup__input:invalid {
+  background: rgba(255, 0, 0, 0.1);
+}
+.react-daterange-picker__inputGroup__input--hasLeadingZero {
+  margin-left: calc(-0.54em * 1.5);
+  padding-left: calc(1px + 0.54em * 1.5);
+}
+.react-daterange-picker__button {
+  border: 0;
+  background: transparent;
+  padding: 4px 6px;
+}
+.react-daterange-picker__button:enabled {
+  cursor: pointer;
+}
+.react-daterange-picker__button:enabled:hover
+  .react-daterange-picker__button__icon,
+.react-daterange-picker__button:enabled:focus
+  .react-daterange-picker__button__icon {
+  stroke: #0078d7;
+}
+.react-daterange-picker__button:disabled .react-daterange-picker__button__icon {
+  stroke: #6d6d6d;
+}
+.react-daterange-picker__button svg .react-daterange-picker__button svg {
+  display: inherit;
+}
+.react-daterange-picker__calendar .react-daterange-picker__calendar {
+  width: 350px;
+  max-width: 100vw;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  z-index: 1;
+}
+.react-daterange-picker__calendar--closed {
+  display: none;
+}
+.react-daterange-picker__calendar .react-calendar {
+  border-width: thin;
+}
