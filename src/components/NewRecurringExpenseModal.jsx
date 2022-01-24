@@ -93,6 +93,7 @@ const NewRecurringExpenseModal = () => {
                   </label>
                   <CreatableSelect
                     placeholder="Seleccionar o crear categoria"
+                    formatCreateLabel={cat => `Crear categoria "${cat}"`}
                     isLoading={isLoadingCategories}
                     isDisabled={isLoadingCategories}
                     onChange={setSelectedCategory}
