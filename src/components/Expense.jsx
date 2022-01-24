@@ -1,4 +1,4 @@
-const Expense = ({ id, name, date, currency, rate, total, badge }) => (
+const Expense = ({ name, date, currency, rate, total, badge }) => (
   <div className="card">
     <div className="card-body row align-items-center p-3 m-0">
       <span className="col-3 col-md-2 d-flex justify-content-center align-items-center">

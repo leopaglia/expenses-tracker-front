@@ -1,25 +1,20 @@
 import { useEffect, useState } from 'react'
-import DatePicker from 'react-date-picker/dist/entry.nostyle'
 import CreatableSelect from 'react-select/creatable'
 import { useAppContext } from '../appContext'
-import { useHistoricDataContext } from '../historicDataContext'
-import './DatePicker.css'
-import 'react-calendar/dist/Calendar.css'
 
-const NewExpenseModal = () => {
+const NewRecurringExpenseModal = () => {
   const {
     categories,
     createCategory,
     isLoadingCategories,
-    createExpense,
+    createRecurringExpense,
     isLoadingExpenses,
   } = useAppContext()
 
-  const { manualReloadHistoricData } = useHistoricDataContext()
-
-  const [date, setDate] = useState(new Date())
   const [selectedCategory, setSelectedCategory] = useState()
   const [selectedCurrency, setSelectedCurrency] = useState('UYU')
+  const [frequency, setFrequency] = useState('monthly')
+  const [unknownTotal, setUnknownTotal] = useState(false)
   const [total, setTotal] = useState(0)
   const [name, setName] = useState('')
 
@@ -33,9 +28,10 @@ const NewExpenseModal = () => {
   }, [categories])
 
   const resetState = () => {
-    setDate(new Date())
+    setFrequency('monthly')
     setSelectedCurrency('UYU')
     setTotal(0)
+    setUnknownTotal(false)
     setName('')
 
     if (categories.length) {
@@ -48,7 +44,7 @@ const NewExpenseModal = () => {
 
   return (
     <div
-      id="newExpenseModal"
+      id="newRecurringExpenseModal"
       className="modal fade text-start"
       tabIndex="-1"
       data-bs-backdrop="static"
@@ -57,7 +53,7 @@ const NewExpenseModal = () => {
       <div className="modal-dialog modal-dialog-centered">
         <div className="modal-content">
           <div className="modal-header">
-            <h5 className="modal-title">Registrar nuevo gasto</h5>
+            <h5 className="modal-title">Registrar nuevo gasto recurrente</h5>
             <button
               type="button"
               className="btn-close"
@@ -68,28 +64,35 @@ const NewExpenseModal = () => {
           <div className="modal-body">
             <div className="row">
               <div className="col-md-5">
-                <div className="mb-3">
-                  <label htmlFor="newExpenseDate" className="form-label">
-                    Fecha
+                <div className="form-group mb-3">
+                  <label
+                    htmlFor="newRecurringExpenseMoneyCode"
+                    className="form-label"
+                  >
+                    Frecuencia
                   </label>
-                  <div className="mb-3">
-                    <DatePicker
-                      onChange={setDate}
-                      value={date}
-                      format="d/M/y"
-                      clearIcon={null}
-                    />
-                  </div>
+                  <select
+                    id="newRecurringExpenseFrequency"
+                    className="form-select"
+                    value={frequency}
+                    onChange={(e) => setFrequency(e.target.value)}
+                  >
+                    <option value="yearly">Anual</option>
+                    <option value="monthly">Mensual</option>
+                    <option value="weekly">Semanal</option>
+                  </select>
                 </div>
               </div>
               <div className="col-md-7">
-                <div className="mb-3">
-                  <label htmlFor="newExpenseCategory" className="form-label">
+                <div className="form-group mb-3">
+                  <label
+                    htmlFor="newRecurringExpenseCategory"
+                    className="form-label"
+                  >
                     Categoria
                   </label>
                   <CreatableSelect
                     placeholder="Seleccionar o crear categoria"
-                    formatCreateLabel={cat => `Crear categoria "${cat}"`}
                     isLoading={isLoadingCategories}
                     isDisabled={isLoadingCategories}
                     onChange={setSelectedCategory}
@@ -106,14 +109,16 @@ const NewExpenseModal = () => {
 
             <div className="row">
               <div className="col-md-5">
-                <div className="mb-3">
-                  <label htmlFor="newExpenseMoneyCode" className="form-label">
+                <div className="form-group">
+                  <label
+                    htmlFor="newRecurringExpenseMoneyCode"
+                    className="form-label"
+                  >
                     Moneda
                   </label>
                   <select
-                    id="newExpenseMoneyCode"
+                    id="newRecurringExpenseMoneyCode"
                     className="form-select"
-                    aria-label="Default select example"
                     value={selectedCurrency}
                     onChange={(e) => setSelectedCurrency(e.target.value)}
                   >
@@ -125,30 +130,51 @@ const NewExpenseModal = () => {
               </div>
 
               <div className="col-md-7">
-                <div className="mb-3">
-                  <label htmlFor="newExpenseTotal" className="form-label">
-                    Total
-                  </label>
-                  <input
-                    type="number"
-                    className="form-control"
-                    id="newExpenseTotal"
-                    value={total}
-                    onChange={(e) => setTotal(e.target.value)}
-                  />
+                <div className="form-group">
+                  <div className="form-group">
+                    <label
+                      htmlFor="newRecurringExpenseTotal"
+                      className="form-label"
+                    >
+                      Total
+                    </label>
+                    <input
+                      type="number"
+                      className="form-control"
+                      id="newRecurringExpenseTotal"
+                      value={unknownTotal ? "" : total}
+                      onChange={(e) => setTotal(e.target.value)}
+                      disabled={unknownTotal}
+                    />
+                  </div>
+                  <div className="form-check form-check-inline">
+                    <input
+                      id="newRecurringExpenseNoTotal"
+                      className="form-check-input"
+                      type="checkbox"
+                      checked={unknownTotal}
+                      onChange={(e) => setUnknownTotal(e.target.checked)}
+                    />
+                    <label
+                      className="form-check-label"
+                      htmlFor="newRecurringExpenseNoTotal"
+                    >
+                      No conozco el total
+                    </label>
+                  </div>
                 </div>
               </div>
             </div>
 
             <div className="row">
-              <div className="mb-3">
-                <label htmlFor="newExpenseName" className="form-label">
+              <div className="form-group mb-3">
+                <label htmlFor="newRecurringExpenseName" className="form-label">
                   Nombre
                 </label>
                 <input
                   type="text"
                   className="form-control"
-                  id="newExpenseName"
+                  id="newRecurringExpenseName"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                 />
@@ -167,19 +193,18 @@ const NewExpenseModal = () => {
               type="button"
               className="btn btn-primary"
               onClick={async () => {
-                await createExpense({
-                  date,
+                await createRecurringExpense({
+                  frequency,
                   category_id: selectedCategory.value,
                   currency: selectedCurrency,
-                  total,
+                  total: unknownTotal ? null : total,
                   name,
                 })
 
                 resetState()
-                manualReloadHistoricData()
 
                 window.bootstrap.Modal.getInstance(
-                  document.getElementById('newExpenseModal')
+                  document.getElementById('newRecurringExpenseModal')
                 ).hide()
               }}
               disabled={isLoadingCategories || isLoadingExpenses}
@@ -193,4 +218,4 @@ const NewExpenseModal = () => {
   )
 }
 
-export default NewExpenseModal
+export default NewRecurringExpenseModal

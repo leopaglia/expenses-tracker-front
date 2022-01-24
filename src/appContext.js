@@ -7,6 +7,8 @@ export const useAppContext = () => useContext(AppContext)
 
 export const Provider = ({ children }) => {
   const [expenses, setExpenses] = useState([])
+  const [incompleteExpenses, setIncompleteExpenses] = useState([])
+  const [recurringExpenses, setRecurringExpenses] = useState([])
   const [isLoadingExpenses, setIsLoadingExpenses] = useState(false)
 
   const [categories, setCategories] = useState([])
@@ -33,6 +35,26 @@ export const Provider = ({ children }) => {
   }, [range, reloadExpensesKey])
 
   useEffect(() => {
+    setIsLoadingExpenses(true)
+    api
+      .getIncompleteExpenses()
+      .then((incompleteExpenses) => {
+        setIncompleteExpenses(incompleteExpenses)
+        setIsLoadingExpenses(false)
+      })
+  }, [reloadExpensesKey])
+
+  useEffect(() => {
+    setIsLoadingExpenses(true)
+    api
+      .getRecurringExpenses()
+      .then((recurringExpenses) => {
+        setRecurringExpenses(recurringExpenses)
+        setIsLoadingExpenses(false)
+      })
+  }, [reloadExpensesKey])
+
+  useEffect(() => {
     setIsLoadingCategories(true)
     api.getCategories().then((categories) => {
       setCategories(categories)
@@ -56,22 +78,55 @@ export const Provider = ({ children }) => {
       name,
     })
     setIsLoadingExpenses(false)
-    setReloadExpensesKey(reloadExpensesKey + 1)
+    setReloadExpensesKey((r) => r + 1)
+  }
+
+  const completeExpense = async ({
+    id,
+    total
+  }) => {
+    setIsLoadingExpenses(true)
+    await api.completeExpense(id, total)
+    setIsLoadingExpenses(false)
+    setReloadExpensesKey((r) => r + 1)
+  }
+
+  const createRecurringExpense = async ({
+    frequency,
+    category_id,
+    currency,
+    total,
+    name,
+  }) => {
+    setIsLoadingExpenses(true)
+    await api.createRecurringExpense({
+      frequency,
+      category_id,
+      currency,
+      total,
+      name,
+    })
+    setIsLoadingExpenses(false)
+    setReloadExpensesKey((r) => r + 1)
   }
 
   const createCategory = async (name) => {
     setIsLoadingCategories(true)
     await api.createCategory(name)
     setIsLoadingCategories(false)
-    setReloadCategoriesKey(reloadCategoriesKey + 1)
+    setReloadCategoriesKey((r) => r + 1)
   }
 
   return (
     <AppContext.Provider
       value={{
         expenses,
+        incompleteExpenses,
+        recurringExpenses,
         isLoadingExpenses,
         createExpense,
+        createRecurringExpense,
+        completeExpense,
         categories,
         isLoadingCategories,
         createCategory,

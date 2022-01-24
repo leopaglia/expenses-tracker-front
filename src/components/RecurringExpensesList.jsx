@@ -1,9 +1,9 @@
 import { useAppContext } from '../appContext'
-import Expense from './Expense'
+import RecurringExpense from './RecurringExpense'
 import Spinner from './Spinner'
 
-const ExpensesList = () => {
-  const { expenses, isLoadingExpenses, categories, selectedCategoryID } =
+const RecurringExpensesList = () => {
+  const { recurringExpenses, isLoadingExpenses, categories, selectedCategoryID } =
     useAppContext()
 
   if (isLoadingExpenses) {
@@ -12,6 +12,10 @@ const ExpensesList = () => {
         <Spinner />
       </div>
     )
+  }
+
+  if(recurringExpenses.length === 0) {
+    return null
   }
 
   const badgeClasses = [
@@ -29,36 +33,32 @@ const ExpensesList = () => {
     ])
   )
 
-  const filteredExpenses = expenses.filter((e) =>
+  const filteredExpenses = recurringExpenses.filter((e) =>
     !!selectedCategoryID ? e.category.id === selectedCategoryID : true
   )
 
   return (
-    <div className="card" style={{ flex: 1 }}>
+    <div className="card mb-4">
       <h5 className="card-header d-flex">
-        <span>Gastos</span>
-        <span className="ms-auto me-3">Total:</span>$
-        {filteredExpenses
-          .reduce((acc, curr) => acc + curr.total / curr.rate, 0)
-          .toFixed(2)}
+        <span>Gastos Recurrentes</span>
       </h5>
       <div
         className="card-body p-0"
-        style={{ flex: 1, overflowX: 'hidden', overflowY: 'scroll' }}
+        style={{ overflowX: 'hidden', overflowY: 'scroll' }}
       >
         {filteredExpenses.map((e) => (
-          <Expense
+          <RecurringExpense
             key={e.id}
             name={e.name}
-            date={e.date}
             currency={e.currency}
-            rate={e.rate}
             total={e.total}
+            frequency={e.frequency}
             badge={
               <h6 className={`badge m-0 ${categoriesBadgesMap[e.category.id]}`}>
                 {e.category.name}
               </h6>
             }
+            recurring
           />
         ))}
       </div>
@@ -66,4 +66,4 @@ const ExpensesList = () => {
   )
 }
 
-export default ExpensesList
+export default RecurringExpensesList

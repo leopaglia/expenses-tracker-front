@@ -10,7 +10,7 @@ export const Provider = ({ children }) => {
   const [reloadHistoricDataKey, setReloadHistoricDataKey] = useState(0)
 
   const manualReloadHistoricData = () =>
-    setReloadHistoricDataKey(reloadHistoricDataKey + 1)
+    setReloadHistoricDataKey(r => r + 1)
 
   useEffect(() => {
     setIsLoadingHistoricData(true)
